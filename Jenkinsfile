@@ -84,17 +84,15 @@ pipeline {
       }
     }
 
-    stage('Apply (manual)') {
+  stage('Apply (manual)') {
   steps {
     echo "About to request approval..."
     input message: 'Apply Terraform now?', ok: 'Proceed (Apply)'
     dir('terraform-demo') {
       sh 'terraform apply -input=false tfplan'
     }
-  }
-
-        
-      
+  }  
+  
       post {
         success {
           slackSend color: '#36a64f',
@@ -122,4 +120,4 @@ pipeline {
                 message: "⚠️ *PIPELINE UNSTABLE*\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}"
     }
   }
-}
+
