@@ -16,8 +16,8 @@ data "aws_ami" "ubuntu" {
   }
 }
 
-resource "aws_security_group" "jenkins_sg" {
-  name        = "jenkins-sg"
+resource "aws_security_group" "jenkins_sgs" {
+  name        = "jenkins-sgs"
   description = "Jenkins controller + SSH"
 
   ingress {
@@ -49,7 +49,7 @@ resource "aws_instance" "jenkins" {
   ami                    = data.aws_ami.ubuntu.id
   instance_type          = "t3.small"
   key_name               = var.key_name
-  vpc_security_group_ids = [aws_security_group.jenkins_sg.id]
+  vpc_security_group_ids = [aws_security_group.jenkins_sgs.id]
 
   user_data = templatefile("${path.module}/user_data.sh", {
     github_repo   = var.github_repo

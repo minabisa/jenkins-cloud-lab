@@ -1,28 +1,29 @@
 #!/bin/bash
-set -e
+set -euxo pipefail
 
 apt-get update -y
-apt-get install -y ca-certificates curl git
+apt-get install -y ca-certificates curl git docker.io
 
-# Install Docker (Ubuntu repo docker.io is fine for lab)
-apt-get install -y docker.io
 systemctl enable --now docker
 
-# Install docker compose plugin (Ubuntu may include it; if not, install)
-apt-get install -y docker-compose-plugin || true
+# Install docker compose v2 binary if plugin isn't available
+if ! docker compose version >/dev/null 2>&1; then
+  curl -L "https://github.com/docker/compose/releases/download/v2.24.6/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
+  chmod +x /usr/local/bin/docker-compose
+  ln -sf /usr/local/bin/docker-compose /usr/bin/docker-compose
+fi
 
-# App folder
 mkdir -p /opt/jenkins-cloud-lab
 cd /opt/jenkins-cloud-lab
 
-# Clone your repo
 if [ ! -d ".git" ]; then
-  git clone -b "${github_branch}" "${github_repo}" .
+  git clone -b "main" "https://github.com/minabisa/jenkins-cloud-lab.git" .
 else
   git pull
 fi
 
-# Start Jenkins + agent
 cd jenkins
 mkdir -p ssh
-docker compose up -d --build
+
+docker compose up -d --build || docker-compose up -d --build
+docker ps

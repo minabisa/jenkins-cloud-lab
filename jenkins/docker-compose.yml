@@ -18,21 +18,10 @@ services:
     restart: unless-stopped
     networks:
       - jenkins-net
-    # optional expose for debugging from outside (not required)
-    # ports:
-    #   - "2222:22"
     volumes:
       - ./ssh:/sshkeys
-    entrypoint: ["/bin/bash", "-lc"]
-    command: >
-      set -e;
-      if [ ! -f /sshkeys/jenkins_agent_key ]; then
-        echo "Generating SSH keypair for Jenkins agent...";
-        ssh-keygen -t ed25519 -f /sshkeys/jenkins_agent_key -N "";
-      fi;
-      export JENKINS_AGENT_SSH_PUBKEY="$(cat /sshkeys/jenkins_agent_key.pub)";
-      /usr/local/bin/setup-sshd
-
+      - ./start-agent.sh:/start-agent.sh:ro
+    entrypoint: ["/bin/bash", "/start-agent.sh"]
 networks:
   jenkins-net:
 
