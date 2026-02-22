@@ -44,7 +44,7 @@ pipeline {
         input message: 'Apply Terraform now?', ok: 'Apply'
         dir('terraform-demo') { sh 'terraform apply -input=false tfplan' }
       }
-      post { success { slackSend "🚀 Apply DONE: ${env.JOB_NAME} #${env.BUILD_NUMBER}" } }
-    }
+post { success { slackSend(message: "✅ Checkout OK: ${env.JOB_NAME} #${env.BUILD_NUMBER}") } 
+}    }
   }
 }
