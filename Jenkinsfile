@@ -13,17 +13,14 @@ pipeline {
   stages {
     stage('Checkout') {
       steps { checkout scm }
-      post { success { slackSend "✅ Checkout OK: ${env.JOB_NAME} #${env.BUILD_NUMBER}" } }
     }
 
     stage('Init') {
       steps { dir('terraform-demo') { sh 'terraform init -input=false' } }
-      post { success { slackSend "✅ Init OK: ${env.JOB_NAME} #${env.BUILD_NUMBER}" } }
     }
 
     stage('Validate') {
       steps { dir('terraform-demo') { sh 'terraform validate' } }
-      post { success { slackSend "✅ Validate OK: ${env.JOB_NAME} #${env.BUILD_NUMBER}" } }
     }
 
     stage('Plan') {
@@ -35,7 +32,6 @@ pipeline {
           '''
         }
       }
-      post { success { slackSend "✅ Plan OK: ${env.JOB_NAME} #${env.BUILD_NUMBER}" } }
     }
 
     stage('Apply (manual)') {
@@ -44,7 +40,6 @@ pipeline {
         input message: 'Apply Terraform now?', ok: 'Apply'
         dir('terraform-demo') { sh 'terraform apply -input=false tfplan' }
       }
-post { success { slackSend(message: "✅ Checkout OK: ${env.JOB_NAME} #${env.BUILD_NUMBER}") } 
-}    }
+    }
   }
 }
