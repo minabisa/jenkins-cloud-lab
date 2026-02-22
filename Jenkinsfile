@@ -92,7 +92,7 @@ pipeline {
       sh 'terraform apply -input=false tfplan'
     }
   }  
-  
+  }
       post {
         success {
           slackSend color: '#36a64f',
@@ -103,7 +103,7 @@ pipeline {
                     message: "❌ *Terraform Apply FAILED* — Build #${env.BUILD_NUMBER}"
         }
       }
-    }
+    
   
 
   post {
