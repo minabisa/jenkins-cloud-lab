@@ -85,13 +85,16 @@ pipeline {
     }
 
     stage('Apply (manual)') {
-      when { branch 'main' }
-      steps {
-        input message: 'Apply Terraform now?', ok: 'Apply'
-        dir('terraform-demo') {
-          sh 'terraform apply -input=false tfplan'
-        }
-      }
+  steps {
+    echo "About to request approval..."
+    input message: 'Apply Terraform now?', ok: 'Proceed (Apply)'
+    dir('terraform-demo') {
+      sh 'terraform apply -input=false tfplan'
+    }
+  }
+
+        
+      
       post {
         success {
           slackSend color: '#36a64f',
@@ -103,7 +106,7 @@ pipeline {
         }
       }
     }
-  }
+  
 
   post {
     success {
